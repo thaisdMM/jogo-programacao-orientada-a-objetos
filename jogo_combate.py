@@ -1,4 +1,4 @@
-# versao refatorada 
+# versao refatorada
 
 import random
 from time import sleep
@@ -111,19 +111,45 @@ class Inimigo(Personagem):
 
 
 class VisualizadorBatalha:
+    def __init__(self):
+        self.delay = False
 
     def titulo(self, mensagem: str):
         self.linha()
         print(mensagem)
         self.linha()
+        self.maybe_delay_jogo()
 
     def linha(self, tamanho=20):
         print("=-" * tamanho)
 
     def exibir_mensagem(self, mensagem: str):
         print(mensagem)
+        self.maybe_delay_jogo()
+
+    def maybe_delay_jogo(self):
+        if self.delay:
+            sleep(1)
+
+    def configurar_delay(self):
+        escolhe_delay = (
+            input(
+                """
+        \n>>> ATENÇÃO <<<:
+                
+Quer jogar com delay visual de 1 segundo por jogada? 
+Digite [S] se sim ou outro comando se Não: """
+            )
+            .upper()
+            .strip()
+        )
+        if escolhe_delay == "S":
+            self.delay = True
+        else:
+            self.delay = False
 
     def menu_das_jogadas(self):
+        self.maybe_delay_jogo()
         print(
             """
         [1] Ataque Normal
@@ -135,15 +161,12 @@ class VisualizadorBatalha:
     def abertura_do_jogo(self, heroi: Heroi, inimigo: Inimigo):
         print()
         self.titulo("JOGO DE COMBATE ENTRE INIMIGO E HERÓI")
-        sleep(1)
         self.exibir_mensagem("\nHERÓI:")
-        print(heroi.exibir_detalhes())
+        self.exibir_mensagem(heroi.exibir_detalhes())
         self.linha()
-        sleep(1)
         self.exibir_mensagem("\nINIMIGO:")
-        print(inimigo.exibir_detalhes())
+        self.exibir_mensagem(inimigo.exibir_detalhes())
         self.linha()
-        sleep(1)
 
     def final_do_jogo(self, heroi: Heroi, inimigo: Inimigo):
         if heroi.vida > 0 and inimigo.vida <= 0:
@@ -156,40 +179,48 @@ class VisualizadorBatalha:
             )
 
     def escolha_jogador(self):
-        escolha = input("Digite a sua escolha para jogar: ")
+        while True:
+            escolha = input("Digite a sua escolha para jogar: ")
+            if escolha == "1" or escolha == "2" or escolha == "3":
+                break
+            else:
+                self.exibir_mensagem(
+                    "Escolha inválida. Escolha 1 ou 2 para atacar, ou 3 para sair do jogo."
+                )
+            self.linha()
         return escolha
 
     def resultado_das_escolhas(
         self, escolha: str, heroi: Heroi, inimigo: Inimigo, retorno_da_escolha: dict
     ):
-        sleep(1)
+        #
 
         if escolha == "1":
-            sleep(1)
+
             self.exibir_mensagem("\n>>>> ATAQUE NORMAL!!! <<<<\n")
-            sleep(1)
-            print(
+
+            self.exibir_mensagem(
                 heroi.format_ataque_response(
                     inimigo, retorno_da_escolha["dano_do_heroi"]
                 )
             )
-            sleep(1)
-            print(
+
+            self.exibir_mensagem(
                 inimigo.format_ataque_response(
                     heroi, retorno_da_escolha["dano_do_inimigo"]
                 )
             )
         elif escolha == "2":
-            sleep(1)
+
             self.exibir_mensagem("\n>>>> ATAQUE ESPECIAL DO HERÓI <<<<\n")
-            sleep(1)
-            print(
+
+            self.exibir_mensagem(
                 heroi.format_ataque_especial_response(
                     inimigo, retorno_da_escolha["dano_do_heroi"]
                 )
             )
-            sleep(1)
-            print(
+
+            self.exibir_mensagem(
                 inimigo.format_ataque_response(
                     heroi, retorno_da_escolha["dano_do_inimigo"]
                 )
@@ -242,6 +273,8 @@ class Jogo:
 
     def iniciar_jogo(self):
 
+        self.visualizador.configurar_delay()
+
         while self.heroi.vida > 0 and self.inimigo.vida > 0:
 
             self.visualizador.abertura_do_jogo(self.heroi, self.inimigo)
@@ -253,10 +286,8 @@ class Jogo:
             )
             if resultado.get("sair_do_jogo"):
                 break
-            if resultado.get("escolha_invalida"):
-                continue
+
         self.visualizador.final_do_jogo(self.heroi, self.inimigo)
-            
 
 
 # testes
@@ -267,48 +298,13 @@ lucifer = Inimigo(
 )
 asta = Heroi(
     nome="Asta",
-    vida=50,
+    vida=100,
     nivel=5,
     gerador_dano=gerar_dano,
     habilidade="Super Força anti-magia",
 )
 
-# print(f"heroi nome: {asta.nome}")
-# print(f"heroi vida: {asta.vida}")
-# print(f"heroi nivel: {asta.nivel}")
-# print(f"heroi exibir detalhes: {asta.exibir_detalhes()}")
-# dano1 = asta.atacar(lucifer)
-# print(f"heroi atacar retorna dano: {dano1}")
-# print(f"format response: {asta.format_ataque_response(lucifer,dano1)}")
-# print()
-# print(f"Inimigo detalhes {lucifer.exibir_detalhes()}")
-# dano2 = lucifer.atacar(asta)
-# print(f"inimigo atacar retorna dano: {dano2}")
-# print(f"format response: {lucifer.format_ataque_response(asta,dano2)}")
-# print()
-# print(f"Inimigo detalhes {asta.exibir_detalhes()}")
-# dano3 = asta.ataque_especial(lucifer)
-# print(f"heroi ataque especial retorna dano: {dano3}")
-# print(f"format response: {asta.format_ataque_especial_response(lucifer,dano3)}")
-# print()
-# print(f"Inimigo detalhes {lucifer.exibir_detalhes()}")
 
-# print()
-# jogo1 = Jogo(asta, lucifer)
-# jogo1.iniciar_jogo()
-
-# print(f"Inimigo detalhes {lucifer.exibir_detalhes()}")
-# print(f"heroi exibir detalhes: {asta.exibir_detalhes()}")
-
-# print(jogo1.ataque_normal())
-# print(f"Inimigo detalhes {lucifer.exibir_detalhes()}")
-# print(f"heroi exibir detalhes: {asta.exibir_detalhes()}")
-# print(jogo1.ataque_especial_heroi())
-# print(f"Inimigo detalhes {lucifer.exibir_detalhes()}")
-# print(f"heroi exibir detalhes: {asta.exibir_detalhes()}")
 visualizador1 = VisualizadorBatalha()
 jogo1 = Jogo(asta, lucifer, visualizador1)
 jogo1.iniciar_jogo()
-# visualizador1 = VisualizadorBatalha()
-# dano = {"dano_do_heroi": 20, "dano_do_inimigo": 15}
-# visualizador1.exibir_acoes_das_escolhas("1", asta, lucifer, dano)
