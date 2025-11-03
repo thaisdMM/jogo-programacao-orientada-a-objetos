@@ -1,6 +1,5 @@
 # Linguagem: Python
-# Objetivo: manter sua implementação original e inserir comentários que
-# expliquem onde e como princípios de Programação Orientada a Objetos (OOP)
+# Objetivo: inserir comentários que expliquem onde e como princípios de Programação Orientada a Objetos (OOP)
 # e boas práticas foram aplicados.
 
 import random
@@ -323,5 +322,21 @@ class Jogo:
 # Comentários adicionados: indicação de padrões OOP usados (encapsulamento,
 # injeção de dependência, herança, polimorfismo, separação de responsabilidades,
 # validação centralizada via properties).
-# Use este arquivo como referência para revisar decisões de design enquanto
-# evolui o seu projeto.
+
+
+# testes
+gerar_dano = GeradorDano()
+# base = gerador_dano.gerar_dano_base()
+lucifer = Inimigo(
+    nome="Lúcifer", vida=80, nivel=5, gerador_dano=gerar_dano, tipo="Demônio"
+)
+asta = Heroi(
+    nome="Asta",
+    vida=100,
+    nivel=5,
+    gerador_dano=gerar_dano,
+    habilidade="Super Força anti-magia",
+)
+visualizador1 = VisualizadorBatalha()
+jogo1 = Jogo(asta, lucifer, visualizador1)
+jogo1.iniciar_jogo()
